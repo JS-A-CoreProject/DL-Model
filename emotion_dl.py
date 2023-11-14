@@ -16,9 +16,23 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 # 모델로 예측 수행
 
 async def predict(text):
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
-    with torch.no_grad():
-        outputs = loaded_model(**inputs)
-        predicts = torch.argmax(outputs.logits, dim=1)
-        predicted_class = predicts.item()
-        return {predicted_class}
+    emotions = {
+    '0': '불안',
+    '1': '놀람',
+    '2': '분노',
+    '3': '슬픔',
+    '4': '중립',
+    '5': '행복',
+    '6': '당황',
+    }
+    textList = text.split('\n')
+    resultList = []
+    for texts in textList:
+        inputs = tokenizer(texts, return_tensors="pt", truncation=True, padding=True)
+        with torch.no_grad():
+            outputs = loaded_model(**inputs)
+            predicts = torch.argmax(outputs.logits, dim=1)
+            predicted_class = predicts.item()
+            # r = list(predicted_class)
+            resultList.append(emotions.get(str(predicted_class)))
+    return resultList

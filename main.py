@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel # 타입스크립트의 interface 같은 애인 듯.
 import emotion_dl as EMOTION
+import advice_dl as ADVICE
 import ai_apis as APIS
 import urllib
 import json
@@ -45,9 +46,18 @@ emotions = {
 @app.post("/predict/emotion/")
 async def emotion_classify(text: Item):
     predicted = await EMOTION.predict(text.text)
-    predicted = list(predicted)
-    result = emotions.get(str(predicted[0]))
+    result = {}
+    for emo in predicted:
+        if emo in result:
+            result[emo] = result[emo] + 1
+        else:
+            result[emo] = 1
     return {"result" : result}
+
+@app.post("/predict/advice/")
+async def for_advice(text: Item):
+    adviced = await ADVICE.chatbot(text.text)
+    return {"result" : adviced[1]}
 
 @app.post('/predict/summary/')
 async def text_summary(text: Item):
@@ -59,6 +69,13 @@ async def text_trans(text: Item):
     result = await APIS.translate(text.text)
     result = json.loads(result)
     return {"result" : result['message']['result']['translatedText'] }
+
+
+@app.post('/predict/advice/')
+async def advice(text: Item):
+    result = await APIS.advice(text.text)
+    result = json.loads(result)
+    return {"result": result}
 
 @app.post("/predict/img/")
 async def create_img(text: Item):

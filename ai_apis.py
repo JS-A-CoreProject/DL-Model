@@ -18,6 +18,23 @@ NAVER_CLIENT_KEY = config('NAVER_CLIENT_KEY')
 PAPAGO_ID = config('PAPAGO_ID')
 PAPAGO_KEY = config('PAPAGO_KEY')
 
+async def advice(text):
+    url = 'https://api.kakaobrain.com/v1/inference/kogpt/generation'
+    r = requests.post(
+        url,
+        json = {
+            'prompt': f"'''{text}'''",
+            'max_tokens': 240,
+            'n': 1
+        },
+        headers = {
+            'Authorization': 'KakaoAK' + REST_API_KEY,
+            'Content-Type': 'application/json'
+        }
+    )
+    res = r.content
+    return res
+    
 async def summary(prompt):
     url = 'https://naveropenapi.apigw.ntruss.com/text-summary/v1/summarize'
     headers = {
