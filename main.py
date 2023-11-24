@@ -18,7 +18,7 @@ config = Config('.env') # env 설정.
 IMGUR_ID = config('IMGUR_ID')
 
 origins = [
-    'http://localhost:3000'
+    '*'
 ]
 app = FastAPI()
 app.add_middleware(
@@ -61,8 +61,11 @@ async def for_advice(text: Item):
 
 @app.post('/predict/summary/')
 async def text_summary(text: Item):
+    print(text.text)
     result = await APIS.summary(text.text)
-    return {"result":result}
+    result = json.loads(result)
+    print(result)
+    return {"result":result['summary']}
 
 @app.post('/predict/trans/')
 async def text_trans(text: Item):
@@ -105,4 +108,6 @@ async def create_img(text: Item):
         return {"result":"File Not Found"}
     except Exception as e:
         return {"result":"ERROR!"}
+    finally:
+        os.remove(name)
     

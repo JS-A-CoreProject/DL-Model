@@ -91,8 +91,8 @@ async def create_image(text):
     r = requests.post(
         'https://api.kakaobrain.com/v2/inference/karlo/t2i',
         json = {
-            'prompt': text + ', 삽화',
-            'negative_prompt': 'text'
+            'prompt': 'trending on pixiv, 8k, ' + text,
+            'negative_prompt': 'nsfw, low res, text, error, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry'
         },
         headers = {
             'Authorization': f'KakaoAK {REST_API_KEY}',
